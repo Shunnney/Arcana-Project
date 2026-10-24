@@ -1,0 +1,142 @@
+/* =========================================================
+   ARCANA — BASE: variables, themes, reset
+   ========================================================= */
+:root {
+  /* ---------- COLORS (from your original style.css) ---------- */
+  --night: #1c1932;
+  --night-dark: #151329;
+  --night-light: #2b2545;
+
+  --paper: #f6ecdc;
+  --paper-light: #fbf5ea;
+  --paper-dark: #eee1cf;
+  --paper2: #fbf5ea;
+
+  --ink: #30273a;
+  --ink-soft: #65586a;
+  --muted: #65586a;
+
+  --gold: #c5a36a;
+  --gold-light: #ddc38d;
+  --gold-dark: #95764b;
+
+  --plum: #78516d;
+  --plum-dark: #55384e;
+  --accent: #78516d; /* plum-coloured TEXT/icons (lightens in night mode) */
+
+  --rose: #ead1cd;
+  --lavender: #ddd8e7;
+  --sage: #dfe3d2;
+
+  --line: rgba(197, 163, 106, 0.35);
+  --surface: rgba(255, 255, 255, 0.35);
+
+  /* ---------- FONTS ---------- */
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans: "Inter", "Segoe UI", Arial, sans-serif;
+
+  /* ---------- LAYOUT ---------- */
+  --header-h: 72px;
+  --side-w: 250px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- NIGHT MODE (☾ button in the header) ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #221e3a;
+  --paper-light: #2b2646;
+  --paper-dark: #191630;
+  --paper2: #272241;
+
+  --ink: #f1e7d3;
+  --ink-soft: #bcb0c2;
+  --muted: #aa9eb3;
+
+  --accent: #dcbad2;
+
+  --rose: #4a3347;
+  --lavender: #362f5c;
+  --sage: #2f3d3b;
+
+  --line: rgba(197, 163, 106, 0.28);
+  --surface: rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
