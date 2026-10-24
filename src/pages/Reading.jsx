@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, RotateCcw } from "lucide-react";
+import { motion } from "framer-motion";
 import TarotCard from "../components/TarotCard";
 import SpreadPreview from "../components/SpreadPreview";
 import SectionHeading from "../components/SectionHeading";
 import { CARDS } from "../data/cards";
 import { SPREADS, getSpread } from "../data/spreads";
-import { motion } from "framer-motion";
+
 /* pick a random card that hasn't been used yet (30% chance of reversed) */
 function randomDraw(usedIds) {
   const pool = CARDS.filter((c) => !usedIds.includes(c.id));
@@ -139,11 +140,11 @@ export default function Reading() {
               const draw = draws[i];
               return (
                 <motion.button
+                  key={`${spread.id}-${position}`}
+                  type="button"
                   whileHover={draw ? undefined : { y: -12, rotate: -2 }}
                   whileTap={draw ? undefined : { scale: 0.94 }}
                   transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                  key={`${spread.id}-${position}`}
-                  type="button"
                   className={`reading-card ${draw ? "revealed" : ""}`}
                   onClick={() => revealOne(i)}
                   disabled={Boolean(draw)}
@@ -154,7 +155,7 @@ export default function Reading() {
                   }
                 >
                   <motion.span
-                    className="rc-inner"
+                    className="rc-flip"
                     initial={false}
                     animate={{ rotateY: draw ? 180 : 0 }}
                     transition={{
@@ -181,21 +182,21 @@ export default function Reading() {
 
           {allDrawn ? (
             <motion.button
-              whileHover={{ y: -3, scale: 1.05 }}
-              whileTap={{ scale: 0.94 }}
               type="button"
               className="draw-button"
               onClick={reset}
+              whileHover={{ y: -3, scale: 1.05 }}
+              whileTap={{ scale: 0.94 }}
             >
               <RotateCcw aria-hidden="true" /> DRAW AGAIN
             </motion.button>
           ) : (
             <motion.button
-              whileHover={{ y: -3, scale: 1.05 }}
-              whileTap={{ scale: 0.94 }}
               type="button"
               className="draw-button"
               onClick={revealAll}
+              whileHover={{ y: -3, scale: 1.05 }}
+              whileTap={{ scale: 0.94 }}
             >
               DRAW THE CARDS <ArrowRight aria-hidden="true" />
             </motion.button>
