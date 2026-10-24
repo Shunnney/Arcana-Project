@@ -1,0 +1,8 @@
+.page { animation: none; }   /* page fade is now done in Layout.jsx */
+
+.btn, .draw-button, .icon-btn, .chip, .tile, .spread-card,
+.journey-step, .about-card, .card-link, .cat-item, .strip-card {
+  transition-property: background, background-color, border-color, color, box-shadow;
+}
+
+.rc-flip { transition: none; }   /* card flip is now driven by Framer Motion */

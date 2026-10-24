@@ -1,9 +1,13 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
 import TarotCard from "../components/TarotCard";
 import { CARDS, STAGES, inStage } from "../data/cards";
+import { CardLink, Stagger } from "../components/Motion";
 
-const CHIPS = [{ id: "all", label: "All" }, ...STAGES.map((s) => ({ id: String(s.id), label: s.label }))];
+const CHIPS = [
+  { id: "all", label: "All" },
+  ...STAGES.map((s) => ({ id: String(s.id), label: s.label })),
+];
 
 export default function AllCards() {
   const [params, setParams] = useSearchParams();
@@ -26,7 +30,13 @@ export default function AllCards() {
   const visible = CARDS.filter((card) => {
     if (stage !== "all" && !inStage(card, Number(stage))) return false;
     if (!query) return true;
-    const haystack = [card.name, card.numeral, card.summary, ...card.keywords, ...card.themes]
+    const haystack = [
+      card.name,
+      card.numeral,
+      card.summary,
+      ...card.keywords,
+      ...card.themes,
+    ]
       .join(" ")
       .toLowerCase();
     return haystack.includes(query);
@@ -41,7 +51,9 @@ export default function AllCards() {
             <h1>THE MAJOR ARCANA</h1>
             <p>22 cards. 22 archetypes. One journey.</p>
           </div>
-          <div className="header-decoration" aria-hidden="true">✧</div>
+          <div className="header-decoration" aria-hidden="true">
+            ✧
+          </div>
         </header>
 
         <div className="chips" role="group" aria-label="Filter cards">
@@ -60,7 +72,8 @@ export default function AllCards() {
 
         {query && (
           <p className="result-note">
-            {visible.length} {visible.length === 1 ? "card" : "cards"} for “{params.get("q")}”
+            {visible.length} {visible.length === 1 ? "card" : "cards"} for “
+            {params.get("q")}”
             <button type="button" onClick={clearSearch}>
               <X aria-hidden="true" /> Clear
             </button>
@@ -73,15 +86,19 @@ export default function AllCards() {
             <p>The cards are silent on that one. Try another word.</p>
           </div>
         ) : (
-          <div className="card-grid">
+          <Stagger className="card-grid" gap={0.04} key={`${stage}-${query}`}>
             {visible.map((card) => (
-              <Link key={card.id} className="card-link" to={`/cards/${card.slug}`}>
+              <CardLink
+                key={card.id}
+                className="card-link"
+                to={`/cards/${card.slug}`}
+              >
                 <TarotCard card={card} />
                 <span className="card-name">{card.name}</span>
                 <small className="card-num">{card.numeral}</small>
-              </Link>
+              </CardLink>
             ))}
-          </div>
+          </Stagger>
         )}
       </div>
     </div>

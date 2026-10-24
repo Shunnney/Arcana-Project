@@ -1,10 +1,28 @@
-import { Link } from "react-router-dom";
 import {
-  ArrowRight, BookOpen, Compass, Layers, MoonStar, Orbit, Shuffle, Sparkles,
+  BookOpen,
+  Compass,
+  Layers,
+  MoonStar,
+  Orbit,
+  Shuffle,
+  Sparkles,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import TarotCard from "../components/TarotCard";
 import SectionHeading from "../components/SectionHeading";
 import SpreadPreview from "../components/SpreadPreview";
+import {
+  Arrow,
+  Button,
+  CardLink,
+  CountUp,
+  Reveal,
+  Stagger,
+  StaggerItem,
+  TextLink,
+  Tilt,
+  rise,
+} from "../components/Motion";
 import { CARDS, STAGES, getCardOfTheDay, inStage } from "../data/cards";
 import { CATEGORIES } from "../data/categories";
 import { SPREADS } from "../data/spreads";
@@ -29,19 +47,31 @@ const STATS = [
 
 const ABOUT_LINKS = [
   {
-    to: "/about/tarot", Icon: BookOpen, title: "What is Tarot?",
+    to: "/about/tarot",
+    Icon: BookOpen,
+    title: "What is Tarot?",
     text: "A gentle introduction to the deck, its history, and how to read a card as a tool for reflection.",
   },
   {
-    to: "/about/major-arcana", Icon: Orbit, title: "About the Major Arcana",
+    to: "/about/major-arcana",
+    Icon: Orbit,
+    title: "About the Major Arcana",
     text: "Meet the 22 archetypes and follow the Fool’s Journey from first step to completion.",
   },
 ];
 
+/* hero text appears line by line */
+const heroContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.16, delayChildren: 0.15 } },
+};
+
 export default function Home() {
   const today = getCardOfTheDay();
   const dateLabel = new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric",
+    weekday: "long",
+    month: "long",
+    day: "numeric",
   });
 
   return (
@@ -50,33 +80,72 @@ export default function Home() {
       <section className="hero">
         <div className="hero-stars" aria-hidden="true">
           {STARS.map((star, i) => (
-            <span key={i} style={{ top: star.t, left: star.l, fontSize: star.s, animationDelay: star.d }}>
+            <span
+              key={i}
+              style={{
+                top: star.t,
+                left: star.l,
+                fontSize: star.s,
+                animationDelay: star.d,
+              }}
+            >
               ✦
             </span>
           ))}
         </div>
-        <div className="moon" aria-hidden="true" />
 
-        <div className="hero-content">
-          <p className="hero-small">Welcome to</p>
-          <h1>ARCANA</h1>
-          <p className="hero-subtitle">The Major Arcana Archive</p>
-          <div className="hero-divider">✦</div>
-          <blockquote>
+        <motion.div
+          className="moon"
+          aria-hidden="true"
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 0.55, scale: 1, y: [0, -14, 0] }}
+          transition={{
+            opacity: { duration: 1.6 },
+            scale: { duration: 1.6, ease: "easeOut" },
+            y: { duration: 7, ease: "easeInOut", repeat: Infinity },
+          }}
+        />
+
+        <motion.div
+          className="hero-content"
+          variants={heroContainer}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.p className="hero-small" variants={rise}>
+            Welcome to
+          </motion.p>
+          <motion.h1 variants={rise}>ARCANA</motion.h1>
+          <motion.p className="hero-subtitle" variants={rise}>
+            The Major Arcana Archive
+          </motion.p>
+          <motion.div className="hero-divider" variants={rise}>
+            <motion.span
+              style={{ display: "inline-block" }}
+              animate={{ rotate: 360, scale: [1, 1.25, 1] }}
+              transition={{
+                rotate: { duration: 14, ease: "linear", repeat: Infinity },
+                scale: { duration: 3, ease: "easeInOut", repeat: Infinity },
+              }}
+            >
+              ✦
+            </motion.span>
+          </motion.div>
+          <motion.blockquote variants={rise}>
             “The cards do not tell your future.
             <br />
             They tell a story.”
-          </blockquote>
+          </motion.blockquote>
 
-          <div className="hero-actions">
-            <Link className="btn btn-gold" to="/reading">
+          <motion.div className="hero-actions" variants={rise}>
+            <Button className="btn btn-gold" to="/reading">
               <MoonStar aria-hidden="true" /> Begin a reading
-            </Link>
-            <Link className="btn btn-ghost" to="/cards">
+            </Button>
+            <Button className="btn btn-ghost" to="/cards">
               <Layers aria-hidden="true" /> Browse the deck
-            </Link>
-          </div>
-        </div>
+            </Button>
+          </motion.div>
+        </motion.div>
 
         <div className="hero-landscape" aria-hidden="true">
           <span className="tower tower-one" />
@@ -87,25 +156,32 @@ export default function Home() {
 
       {/* ---------- STATS ---------- */}
       <div className="home-content stats-wrap">
-        <div className="stats">
+        <Stagger className="stats" gap={0.12}>
           {STATS.map(({ Icon, value, label }) => (
-            <div className="stat" key={label}>
+            <StaggerItem className="stat" key={label}>
               <Icon aria-hidden="true" />
-              <b>{value}</b>
+              <CountUp value={value} />
               <span>{label}</span>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
 
       <div className="home-content">
         {/* ---------- QUICK PATHS (Explore menu) ---------- */}
-        <section className="home-block">
-          <SectionHeading eyebrow="EXPLORE BY THEME" title="What are you looking for today?" />
+        <Reveal as="section" className="home-block">
+          <SectionHeading
+            eyebrow="EXPLORE BY THEME"
+            title="What are you looking for today?"
+          />
 
-          <div className="tiles">
+          <Stagger className="tiles">
             {CATEGORIES.map(({ slug, title, tagline, tone, Icon }) => (
-              <Link key={slug} className={`tile tile-${tone}`} to={`/explore/${slug}`}>
+              <CardLink
+                key={slug}
+                className={`tile tile-${tone}`}
+                to={`/explore/${slug}`}
+              >
                 <span className="tile-icon">
                   <Icon aria-hidden="true" />
                 </span>
@@ -114,28 +190,32 @@ export default function Home() {
                 <span className="tile-count">
                   {CARDS.filter((c) => c.themes.includes(slug)).length} cards
                 </span>
-              </Link>
+              </CardLink>
             ))}
 
-            <Link className="tile tile-sage" to="/reading">
+            <CardLink className="tile tile-sage" to="/reading">
               <span className="tile-icon">
                 <MoonStar aria-hidden="true" />
               </span>
               <b>A Simple Reading</b>
               <span className="tile-sub">Draw a card</span>
               <span className="tile-count">3 spreads</span>
-            </Link>
-          </div>
-        </section>
+            </CardLink>
+          </Stagger>
+        </Reveal>
 
         {/* ---------- CARD OF THE DAY ---------- */}
-        <section className="home-block">
-          <SectionHeading eyebrow="TODAY" title="Card of the Day" Icon={Sparkles} />
+        <Reveal as="section" className="home-block">
+          <SectionHeading
+            eyebrow="TODAY"
+            title="Card of the Day"
+            Icon={Sparkles}
+          />
 
           <div className="cotd">
-            <div className="cotd-card">
+            <Tilt className="cotd-card">
               <TarotCard card={today} />
-            </div>
+            </Tilt>
 
             <div className="cotd-info">
               <span className="eyebrow">{dateLabel}</span>
@@ -145,42 +225,50 @@ export default function Home() {
               <p className="sub">{today.keywords.join(" · ")}</p>
               <p className="cotd-text">{today.meaning}</p>
 
-              <div className="tags">
+              <Stagger className="tags" gap={0.07}>
                 {today.upright.map((word) => (
-                  <span key={word}>{word}</span>
+                  <StaggerItem as="span" key={word}>
+                    {word}
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
 
               <div className="cotd-actions">
-                <Link className="btn" to={`/cards/${today.slug}`}>
-                  Explore <ArrowRight aria-hidden="true" />
-                </Link>
-                <Link className="btn btn-outline" to="/reading?spread=one">
+                <Button className="btn" to={`/cards/${today.slug}`}>
+                  Explore <Arrow />
+                </Button>
+                <Button className="btn btn-outline" to="/reading?spread=one">
                   Draw your own
-                </Link>
+                </Button>
               </div>
             </div>
 
-            <div className="quote">“{today.quote}”</div>
+            <Reveal className="quote" delay={0.2} y={20}>
+              “{today.quote}”
+            </Reveal>
           </div>
-        </section>
+        </Reveal>
 
         {/* ---------- READING SPREADS ---------- */}
-        <section className="home-block">
+        <Reveal as="section" className="home-block">
           <SectionHeading
             eyebrow="THE READING ROOM"
             title="Begin a Reading"
             Icon={MoonStar}
             action={
-              <Link className="link-arrow" to="/reading">
-                Open reading room <ArrowRight aria-hidden="true" />
-              </Link>
+              <TextLink className="link-arrow" to="/reading">
+                Open reading room <Arrow />
+              </TextLink>
             }
           />
 
-          <div className="spread-grid compact">
+          <Stagger className="spread-grid compact">
             {SPREADS.map((spread) => (
-              <Link key={spread.id} className="spread-card" to={`/reading?spread=${spread.id}`}>
+              <CardLink
+                key={spread.id}
+                className="spread-card"
+                to={`/reading?spread=${spread.id}`}
+              >
                 <SpreadPreview spread={spread} />
                 <div className="spread-info">
                   <h3>{spread.title}</h3>
@@ -188,22 +276,26 @@ export default function Home() {
                   <small>{spread.description}</small>
                 </div>
                 <span className="spread-number">{spread.number}</span>
-              </Link>
+              </CardLink>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
 
         {/* ---------- THE FOOL'S JOURNEY ---------- */}
-        <section className="home-block">
+        <Reveal as="section" className="home-block">
           <SectionHeading
             eyebrow="THE FOOL’S JOURNEY"
             title="Three Acts, Twenty-Two Cards"
             Icon={Compass}
           />
 
-          <div className="journey">
+          <Stagger className="journey" gap={0.15}>
             {STAGES.map((stage) => (
-              <Link key={stage.id} className="journey-step" to={`/cards?stage=${stage.id}`}>
+              <CardLink
+                key={stage.id}
+                className="journey-step"
+                to={`/cards?stage=${stage.id}`}
+              >
                 <span className="journey-num">{stage.label}</span>
                 <h3>{stage.title}</h3>
                 <p>{stage.blurb}</p>
@@ -219,44 +311,53 @@ export default function Home() {
                 </div>
 
                 <span className="link-arrow">
-                  Explore {stage.label} <ArrowRight aria-hidden="true" />
+                  Explore {stage.label} <Arrow />
                 </span>
-              </Link>
+              </CardLink>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
 
         {/* ---------- DECK STRIP ---------- */}
-        <section className="home-block">
+        <Reveal as="section" className="home-block">
           <SectionHeading
             eyebrow="THE DECK"
             title="All 22 Cards"
             Icon={Layers}
             action={
-              <Link className="link-arrow" to="/cards">
-                View all cards <ArrowRight aria-hidden="true" />
-              </Link>
+              <TextLink className="link-arrow" to="/cards">
+                View all cards <Arrow />
+              </TextLink>
             }
           />
 
-          <div className="deck-strip">
+          <Stagger className="deck-strip" gap={0.04}>
             {CARDS.map((card) => (
-              <Link key={card.id} className="strip-card" to={`/cards/${card.slug}`}>
+              <CardLink
+                key={card.id}
+                className="strip-card"
+                to={`/cards/${card.slug}`}
+                lift={4}
+              >
                 <TarotCard card={card} />
                 <span className="strip-name">{card.name}</span>
                 <small>{card.numeral}</small>
-              </Link>
+              </CardLink>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
 
         {/* ---------- ABOUT ---------- */}
-        <section className="home-block">
-          <SectionHeading eyebrow="LEARN" title="New to Tarot?" Icon={BookOpen} />
+        <Reveal as="section" className="home-block">
+          <SectionHeading
+            eyebrow="LEARN"
+            title="New to Tarot?"
+            Icon={BookOpen}
+          />
 
-          <div className="about-grid">
+          <Stagger className="about-grid" gap={0.14}>
             {ABOUT_LINKS.map(({ to, Icon, title, text }) => (
-              <Link key={to} className="about-card" to={to}>
+              <CardLink key={to} className="about-card" to={to}>
                 <span className="about-icon">
                   <Icon aria-hidden="true" />
                 </span>
@@ -264,21 +365,27 @@ export default function Home() {
                   <h3>{title}</h3>
                   <p>{text}</p>
                   <span className="link-arrow">
-                    Read more <ArrowRight aria-hidden="true" />
+                    Read more <Arrow />
                   </span>
                 </div>
-              </Link>
+              </CardLink>
             ))}
-          </div>
-        </section>
+          </Stagger>
+        </Reveal>
       </div>
 
       {/* ---------- CLOSING ---------- */}
-      <section className="closing">
-        <Sparkles aria-hidden="true" />
+      <Reveal as="section" className="closing">
+        <motion.span
+          style={{ display: "inline-flex" }}
+          animate={{ rotate: [0, 12, -12, 0], scale: [1, 1.15, 1] }}
+          transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
+        >
+          <Sparkles aria-hidden="true" />
+        </motion.span>
         <blockquote>“Not everything that is lost is gone forever.”</blockquote>
         <cite>— The Star · XVII</cite>
-      </section>
+      </Reveal>
     </div>
   );
 }

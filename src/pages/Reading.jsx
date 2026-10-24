@@ -6,7 +6,7 @@ import SpreadPreview from "../components/SpreadPreview";
 import SectionHeading from "../components/SectionHeading";
 import { CARDS } from "../data/cards";
 import { SPREADS, getSpread } from "../data/spreads";
-
+import { motion } from "framer-motion";
 /* pick a random card that hasn't been used yet (30% chance of reversed) */
 function randomDraw(usedIds) {
   const pool = CARDS.filter((c) => !usedIds.includes(c.id));
@@ -70,14 +70,17 @@ export default function Reading() {
           have to say?
         </h1>
         <p className="reading-intro">
-          Take a moment to reflect. Choose a spread, draw your cards, and let the archetypes reveal
-          a story worth exploring.
+          Take a moment to reflect. Choose a spread, draw your cards, and let
+          the archetypes reveal a story worth exploring.
         </p>
       </div>
 
       {/* 01 — SPREAD */}
       <div className="reading-section">
-        <SectionHeading eyebrow="01 — CHOOSE YOUR SPREAD" title="Begin Your Reading" />
+        <SectionHeading
+          eyebrow="01 — CHOOSE YOUR SPREAD"
+          title="Begin Your Reading"
+        />
 
         <div className="spread-grid">
           {SPREADS.map((s) => (
@@ -107,8 +110,8 @@ export default function Reading() {
           <span className="eyebrow">BEFORE YOU DRAW</span>
           <h2>What is on your mind?</h2>
           <p>
-            You don’t need to have a perfect question. Simply focus on something you would like to
-            understand.
+            You don’t need to have a perfect question. Simply focus on something
+            you would like to understand.
           </p>
           <textarea
             value={question}
@@ -127,47 +130,75 @@ export default function Reading() {
           <span className="eyebrow">{spread.title.toUpperCase()}</span>
           <h2>Draw your cards</h2>
           <p>
-            When you’re ready, choose each card — or draw them all at once — and allow its symbolism
-            to guide your reflection.
+            When you’re ready, choose each card — or draw them all at once — and
+            allow its symbolism to guide your reflection.
           </p>
 
           <div className="reading-cards">
             {spread.positions.map((position, i) => {
               const draw = draws[i];
               return (
-                <button
+                <motion.button
+                  whileHover={draw ? undefined : { y: -12, rotate: -2 }}
+                  whileTap={draw ? undefined : { scale: 0.94 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 18 }}
                   key={`${spread.id}-${position}`}
                   type="button"
                   className={`reading-card ${draw ? "revealed" : ""}`}
                   onClick={() => revealOne(i)}
                   disabled={Boolean(draw)}
-                  aria-label={draw ? `${position}: ${draw.card.name}` : `Reveal card for ${position}`}
+                  aria-label={
+                    draw
+                      ? `${position}: ${draw.card.name}`
+                      : `Reveal card for ${position}`
+                  }
                 >
-                  <span
-                    className="rc-flip"
-                    style={{ transitionDelay: bulk ? `${i * 0.18}s` : "0s" }}
+                  <motion.span
+                    className="rc-inner"
+                    initial={false}
+                    animate={{ rotateY: draw ? 180 : 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 70,
+                      damping: 13,
+                      delay: bulk ? i * 0.18 : 0,
+                    }}
                   >
                     <span className="rc-face rc-back card-back">
                       <span>✦</span>
                     </span>
                     <span className="rc-face rc-front">
-                      {draw && <TarotCard card={draw.card} reversed={draw.reversed} />}
+                      {draw && (
+                        <TarotCard card={draw.card} reversed={draw.reversed} />
+                      )}
                     </span>
-                  </span>
+                  </motion.span>
                   <small>{position.toUpperCase()}</small>
-                </button>
+                </motion.button>
               );
             })}
           </div>
 
           {allDrawn ? (
-            <button type="button" className="draw-button" onClick={reset}>
+            <motion.button
+              whileHover={{ y: -3, scale: 1.05 }}
+              whileTap={{ scale: 0.94 }}
+              type="button"
+              className="draw-button"
+              onClick={reset}
+            >
               <RotateCcw aria-hidden="true" /> DRAW AGAIN
-            </button>
+            </motion.button>
           ) : (
-            <button type="button" className="draw-button" onClick={revealAll}>
+            <motion.button
+              whileHover={{ y: -3, scale: 1.05 }}
+              whileTap={{ scale: 0.94 }}
+              type="button"
+              className="draw-button"
+              onClick={revealAll}
+            >
               DRAW THE CARDS <ArrowRight aria-hidden="true" />
-            </button>
+            </motion.button>
           )}
         </div>
 
@@ -178,7 +209,10 @@ export default function Reading() {
       <div aria-live="polite">
         {drawnCount > 0 && (
           <section className="reading-result">
-            <SectionHeading eyebrow="YOUR READING" title="What the cards reveal" />
+            <SectionHeading
+              eyebrow="YOUR READING"
+              title="What the cards reveal"
+            />
 
             {question.trim() && (
               <p className="result-question">
@@ -203,7 +237,9 @@ export default function Reading() {
                         {card.numeral} — {card.name}
                         {reversed && <em className="badge">Reversed</em>}
                       </h3>
-                      <p className="sub">{(reversed ? card.reversed : card.upright).join(" · ")}</p>
+                      <p className="sub">
+                        {(reversed ? card.reversed : card.upright).join(" · ")}
+                      </p>
                       <p className="result-text">
                         {reversed
                           ? `In reverse, ${card.name} points to ${card.reversed
@@ -226,8 +262,8 @@ export default function Reading() {
       <div className="reading-note">
         <span>✦</span>
         <p>
-          Tarot is a tool for reflection and storytelling. The cards do not determine your future.
-          What you find in them is yours to interpret.
+          Tarot is a tool for reflection and storytelling. The cards do not
+          determine your future. What you find in them is yours to interpret.
         </p>
       </div>
     </div>
