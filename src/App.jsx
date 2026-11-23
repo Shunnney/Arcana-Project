@@ -6,6 +6,7 @@ import CardDetail from "./pages/CardDetail";
 import Reading from "./pages/Reading";
 import Category from "./pages/Category";
 import About from "./pages/About";
+import ManageCards from "./pages/ManageCards";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="cards" element={<AllCards />} />
         <Route path="cards/:slug" element={<CardDetail />} />
+        <Route path="manage" element={<ManageCards />} />
         <Route path="reading" element={<Reading />} />
         <Route path="explore/:slug" element={<Category />} />
         <Route path="about/:slug" element={<About />} />

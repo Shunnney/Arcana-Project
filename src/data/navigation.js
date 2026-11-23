@@ -1,4 +1,4 @@
-import { Home, Layers, MoonStar, BookOpen, Orbit } from "lucide-react";
+import { Home, Layers, MoonStar, BookOpen, Orbit, SlidersHorizontal } from "lucide-react";
 import { CATEGORIES } from "./categories";
 
 /* Sidebar menu — the Home page mirrors every entry here. */
@@ -8,6 +8,7 @@ export const NAV = [
     items: [
       { to: "/", label: "Home", Icon: Home, end: true },
       { to: "/cards", label: "All Cards", Icon: Layers },
+      { to: "/manage", label: "Deck Manager", Icon: SlidersHorizontal },
       { to: "/reading", label: "Reading", Icon: MoonStar },
     ],
   },

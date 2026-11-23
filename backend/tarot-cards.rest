@@ -1,0 +1,153 @@
+### Arcana Tarot Cards API - REST Client Tests
+### Compatible with the VS Code REST Client extension
+
+@baseUrl = http://localhost:3000/api
+
+###############################################################################
+# 1. GET All Tarot Cards
+###############################################################################
+### Get all 22 Major Arcana cards
+GET {{baseUrl}}/tarot-cards
+Accept: application/json
+
+###############################################################################
+# 2. GET One Tarot Card by ID
+###############################################################################
+### Get The Fool (ID: 0)
+GET {{baseUrl}}/tarot-cards/0
+Accept: application/json
+
+### Get The Magician (ID: 1)
+GET {{baseUrl}}/tarot-cards/1
+Accept: application/json
+
+###############################################################################
+# 3. POST Create a New Tarot Card (201 Created)
+###############################################################################
+### Create a new Tarot Card (The Cosmos - Card #22)
+POST {{baseUrl}}/tarot-cards
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "The Cosmos",
+  "number": 22,
+  "numeral": "XXII",
+  "arcana": "Major Arcana",
+  "uprightMeaning": "Infinite potential, Universal consciousness, Cosmic harmony",
+  "reversedMeaning": "Disconnection from source, Chaos, Feeling lost in the vastness",
+  "description": "The Cosmos transcends the earthly cycle, representing the infinite expanse of universal wisdom and soul integration.",
+  "symbolism": "A spiraling galaxy cradled by celestial hands beneath a canopy of shimmering constellations.",
+  "element": "Aether",
+  "planet": "Pluto",
+  "zodiac": "Ophiuchus",
+  "image": "https://gfx.tarot.com/images/site/decks/english-magic/full_size/21.jpg",
+  "keywords": [
+    "Infinity",
+    "Cosmic Unity",
+    "Transcendence"
+  ],
+  "isFavorite": true,
+  "quote": "In the dance of stars, we discover the light within."
+}
+
+###############################################################################
+# 4. PATCH Update an Existing Tarot Card (200 OK)
+###############################################################################
+### Update card #0 (The Fool) - Update isFavorite and uprightMeaning
+PATCH {{baseUrl}}/tarot-cards/0
+Content-Type: application/json
+Accept: application/json
+
+{
+  "isFavorite": true,
+  "quote": "Every journey begins with a single, unguarded step into the unknown."
+}
+
+###############################################################################
+# 5. DELETE a Tarot Card (200 OK)
+###############################################################################
+### Delete the newly created card (#22)
+DELETE {{baseUrl}}/tarot-cards/22
+Accept: application/json
+
+###############################################################################
+# 6. Test Nonexistent ID (404 Not Found)
+###############################################################################
+### Attempt to retrieve a nonexistent card ID
+GET {{baseUrl}}/tarot-cards/999
+Accept: application/json
+
+### Attempt to update a nonexistent card ID
+PATCH {{baseUrl}}/tarot-cards/999
+Content-Type: application/json
+Accept: application/json
+
+{
+  "isFavorite": true
+}
+
+### Attempt to delete a nonexistent card ID
+DELETE {{baseUrl}}/tarot-cards/999
+Accept: application/json
+
+###############################################################################
+# 7. Test Duplicate Data (409 Conflict)
+###############################################################################
+### Attempt to create a card with an already existing name ("The Fool")
+POST {{baseUrl}}/tarot-cards
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "The Fool",
+  "number": 99,
+  "arcana": "Major Arcana",
+  "uprightMeaning": "New beginnings",
+  "reversedMeaning": "Recklessness",
+  "description": "Duplicate test card.",
+  "image": "https://gfx.tarot.com/images/site/decks/english-magic/full_size/0.jpg"
+}
+
+### Attempt to create a card with an already existing number (0)
+POST {{baseUrl}}/tarot-cards
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "The Duplicate Zero",
+  "number": 0,
+  "arcana": "Major Arcana",
+  "uprightMeaning": "New beginnings",
+  "reversedMeaning": "Recklessness",
+  "description": "Duplicate number test.",
+  "image": "https://gfx.tarot.com/images/site/decks/english-magic/full_size/0.jpg"
+}
+
+###############################################################################
+# 8. Test Invalid DTO Input (400 Bad Request)
+###############################################################################
+### Missing required fields (name, arcana, description, image, uprightMeaning, reversedMeaning)
+POST {{baseUrl}}/tarot-cards
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "X"
+}
+
+### Negative number validation failure (@Min(0))
+POST {{baseUrl}}/tarot-cards
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Invalid Card",
+  "number": -5,
+  "arcana": "Major Arcana",
+  "uprightMeaning": "Light",
+  "reversedMeaning": "Shadow",
+  "description": "Test negative number.",
+  "image": "https://example.com/card.jpg"
+}
+

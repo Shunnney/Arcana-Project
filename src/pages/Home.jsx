@@ -6,6 +6,7 @@ import {
   Orbit,
   Shuffle,
   Sparkles,
+  SlidersHorizontal,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import TarotCard from "../components/TarotCard";
@@ -23,9 +24,10 @@ import {
   Tilt,
   rise,
 } from "../components/Motion";
-import { CARDS, STAGES, getCardOfTheDay, inStage } from "../data/cards";
+import { STAGES, getCardOfTheDay, inStage } from "../data/cards";
 import { CATEGORIES } from "../data/categories";
 import { SPREADS } from "../data/spreads";
+import { useTarot } from "../context/TarotContext";
 
 const STARS = [
   { t: "14%", l: "9%", s: 14, d: "0s" },
@@ -36,13 +38,6 @@ const STARS = [
   { t: "46%", l: "84%", s: 9, d: "2.6s" },
   { t: "58%", l: "12%", s: 8, d: "1.5s" },
   { t: "62%", l: "46%", s: 10, d: "0.3s" },
-];
-
-const STATS = [
-  { Icon: Layers, value: "22", label: "Major Arcana cards" },
-  { Icon: Shuffle, value: "3", label: "Reading spreads" },
-  { Icon: Compass, value: "5", label: "Themes to explore" },
-  { Icon: Sparkles, value: "∞", label: "Stories to tell" },
 ];
 
 const ABOUT_LINKS = [
@@ -67,12 +62,20 @@ const heroContainer = {
 };
 
 export default function Home() {
+  const { cards } = useTarot();
   const today = getCardOfTheDay();
   const dateLabel = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
+
+  const STATS = [
+    { Icon: Layers, value: String(cards.length), label: "Major Arcana cards" },
+    { Icon: Shuffle, value: "3", label: "Reading spreads" },
+    { Icon: Compass, value: "5", label: "Themes to explore" },
+    { Icon: Sparkles, value: "∞", label: "Stories to tell" },
+  ];
 
   return (
     <div className="page">
@@ -144,6 +147,9 @@ export default function Home() {
             <Button className="btn btn-ghost" to="/cards">
               <Layers aria-hidden="true" /> Browse the deck
             </Button>
+            <Button className="btn btn-outline" to="/manage">
+              <SlidersHorizontal aria-hidden="true" /> Manage deck
+            </Button>
           </motion.div>
         </motion.div>
 
@@ -188,7 +194,7 @@ export default function Home() {
                 <b>{title}</b>
                 <span className="tile-sub">{tagline}</span>
                 <span className="tile-count">
-                  {CARDS.filter((c) => c.themes.includes(slug)).length} cards
+                  {cards.filter((c) => Array.isArray(c.themes) && c.themes.includes(slug)).length} cards
                 </span>
               </CardLink>
             ))}
@@ -301,7 +307,8 @@ export default function Home() {
                 <p>{stage.blurb}</p>
 
                 <div className="journey-thumbs">
-                  {CARDS.filter((c) => inStage(c, stage.id))
+                  {cards
+                    .filter((c) => inStage(c, stage.id))
                     .slice(0, 4)
                     .map((card) => (
                       <span className="thumb" key={card.id}>
@@ -322,7 +329,7 @@ export default function Home() {
         <Reveal as="section" className="home-block">
           <SectionHeading
             eyebrow="THE DECK"
-            title="All 22 Cards"
+            title="All Cards"
             Icon={Layers}
             action={
               <TextLink className="link-arrow" to="/cards">
@@ -332,16 +339,16 @@ export default function Home() {
           />
 
           <Stagger className="deck-strip" gap={0.04}>
-            {CARDS.map((card) => (
+            {cards.map((card) => (
               <CardLink
                 key={card.id}
                 className="strip-card"
-                to={`/cards/${card.slug}`}
+                to={`/cards/${card.slug || card.id}`}
                 lift={4}
               >
                 <TarotCard card={card} />
                 <span className="strip-name">{card.name}</span>
-                <small>{card.numeral}</small>
+                <small>{card.numeral || card.number}</small>
               </CardLink>
             ))}
           </Stagger>

@@ -1,8 +1,9 @@
 import { useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
 import TarotCard from "../components/TarotCard";
-import { CARDS, STAGES, inStage } from "../data/cards";
+import { STAGES, inStage } from "../data/cards";
 import { CardLink, Stagger } from "../components/Motion";
+import { useTarot } from "../context/TarotContext";
 
 const CHIPS = [
   { id: "all", label: "All" },
@@ -10,6 +11,7 @@ const CHIPS = [
 ];
 
 export default function AllCards() {
+  const { cards } = useTarot();
   const [params, setParams] = useSearchParams();
   const stage = params.get("stage") ?? "all";
   const query = (params.get("q") ?? "").trim().toLowerCase();
@@ -27,16 +29,23 @@ export default function AllCards() {
     setParams(next, { replace: true });
   };
 
-  const visible = CARDS.filter((card) => {
+  const visible = cards.filter((card) => {
     if (stage !== "all" && !inStage(card, Number(stage))) return false;
     if (!query) return true;
+    const keywordsList = Array.isArray(card.keywords) ? card.keywords : [];
+    const themesList = Array.isArray(card.themes) ? card.themes : [];
     const haystack = [
       card.name,
       card.numeral,
       card.summary,
-      ...card.keywords,
-      ...card.themes,
+      card.description,
+      card.element,
+      card.planet,
+      card.zodiac,
+      ...keywordsList,
+      ...themesList,
     ]
+      .filter(Boolean)
       .join(" ")
       .toLowerCase();
     return haystack.includes(query);
@@ -49,7 +58,7 @@ export default function AllCards() {
           <div>
             <span className="eyebrow">THE DECK</span>
             <h1>THE MAJOR ARCANA</h1>
-            <p>22 cards. 22 archetypes. One journey.</p>
+            <p>{cards.length} cards. 22 archetypes. One journey.</p>
           </div>
           <div className="header-decoration" aria-hidden="true">
             ✧
@@ -86,16 +95,16 @@ export default function AllCards() {
             <p>The cards are silent on that one. Try another word.</p>
           </div>
         ) : (
-          <Stagger className="card-grid" gap={0.04} key={`${stage}-${query}`}>
+          <Stagger className="card-grid" gap={0.04} key={`${stage}-${query}-${cards.length}`}>
             {visible.map((card) => (
               <CardLink
                 key={card.id}
                 className="card-link"
-                to={`/cards/${card.slug}`}
+                to={`/cards/${card.slug || card.id}`}
               >
                 <TarotCard card={card} />
                 <span className="card-name">{card.name}</span>
-                <small className="card-num">{card.numeral}</small>
+                <small className="card-num">{card.numeral || card.number}</small>
               </CardLink>
             ))}
           </Stagger>
